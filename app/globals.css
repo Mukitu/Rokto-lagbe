@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --red: #C0001A;
+  --red-dark: #8B0000;
+  --bg: #FFF8F0;
+  --text: #1A0A0A;
+  --green: #0A7A40;
+  --orange: #D97706;
+  --shadow: 0 4px 24px rgba(192,0,26,0.10);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Hind Siliguri', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#C0001A] text-white px-6 py-3 rounded-xl
+    font-semibold hover:bg-[#8B0000] transition-all
+    duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+    active:scale-95;
+  }
+  .btn-outline {
+    @apply border-2 border-[#C0001A] text-[#C0001A] px-6 py-3
+    rounded-xl font-semibold hover:bg-[#C0001A] hover:text-white
+    transition-all duration-200 active:scale-95;
+  }
+  .btn-ghost {
+    @apply text-[#C0001A] px-4 py-2 rounded-xl font-semibold
+    hover:bg-[#FFF0F2] transition-all duration-200;
+  }
+  .input-field {
+    @apply w-full border border-gray-200 rounded-xl p-3
+    focus:outline-none focus:border-[#C0001A] focus:ring-2
+    focus:ring-[#C0001A]/20 bg-white transition-all duration-200
+    placeholder:text-gray-400;
+  }
+  .card {
+    @apply bg-white rounded-2xl border border-gray-100
+    shadow-sm p-6 transition-all duration-200;
+  }
+  .card-hover {
+    @apply card hover:shadow-md hover:-translate-y-0.5;
+  }
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full
+    text-xs font-semibold border;
+  }
+  .section-title {
+    @apply text-2xl font-bold text-[#1A0A0A] mb-2;
+  }
+  .section-subtitle {
+    @apply text-gray-500 mb-8;
+  }
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: linear-gradient(90deg,
+    #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb {
+  background: #C0001A; border-radius: 3px; }

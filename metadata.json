@@ -1,0 +1,5 @@
+{
+  "name": "রক্ত লাগবে",
+  "description": "রক্তদান, ডাক্তার এবং অ্যাম্বুলেন্সের জন্য একটি জরুরি সেবা প্ল্যাটফর্ম।",
+  "requestFramePermissions": ["geolocation"]
+}
