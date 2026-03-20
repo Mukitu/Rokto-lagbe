@@ -2,11 +2,17 @@
 const nextConfig = {
   output: 'standalone',
   images: {
-    domains: ['elzxkrpkvabxfferhnmm.supabase.co', 'tsuhizknudvtztxolkng.supabase.co'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'elzxkrpkvabxfferhnmm.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'tsuhizknudvtztxolkng.supabase.co',
+      },
+    ],
     unoptimized: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
