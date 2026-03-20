@@ -3,7 +3,7 @@ const path = require('path');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
-  outputFileTracingRoot: __dirname,
+  outputFileTracingRoot: path.resolve(__dirname),
   images: {
     remotePatterns: [
       {
@@ -19,6 +19,7 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
-  }
+  },
 }
+
 module.exports = nextConfig
