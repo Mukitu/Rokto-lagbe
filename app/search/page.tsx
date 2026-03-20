@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Search, Map as MapIcon, List, Filter } from 'lucide-react'
+import { Search, Map as MapIcon, List, Filter, MapPin } from 'lucide-react'
 import { BLOOD_GROUPS, DISTRICTS, DOCTOR_SPECIALITIES, VEHICLE_TYPES } from '@/lib/constants'
 import { supabase } from '@/lib/supabase'
 import { NearbyUser, SearchFilters } from '@/types'
