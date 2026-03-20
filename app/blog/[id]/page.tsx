@@ -1,71 +1,72 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { Blog } from '@/types/blog'
+import { Metadata, ResolvingMetadata } from 'next'
 import Image from 'next/image'
-import { Calendar, User, Facebook, Twitter, Instagram, MessageCircle, Share2, ArrowLeft, Copy, Check } from 'lucide-react'
 import Link from 'next/link'
+import { Calendar, User, ArrowLeft } from 'lucide-react'
+import ShareButtons from './ShareButtons'
+import { notFound } from 'next/navigation'
 
-export default function BlogDetailPage() {
-  const { id } = useParams()
-  const router = useRouter()
-  const [blog, setBlog] = useState<Blog | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [copied, setCopied] = useState(false)
+type Props = {
+  params: Promise<{ id: string }>
+}
 
-  useEffect(() => {
-    if (id) fetchBlog()
-  }, [id])
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const resolvedParams = await params
+  const id = resolvedParams.id
 
-  const fetchBlog = async () => {
-    try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('blogs')
-        .select('*')
-        .eq('id', id)
-        .single()
+  const { data: blog } = await supabase
+    .from('blogs')
+    .select('*')
+    .eq('id', id)
+    .single()
 
-      if (error) throw error
-      setBlog(data)
-    } catch (error) {
-      console.error('Error fetching blog:', error)
-      router.push('/blog')
-    } finally {
-      setLoading(false)
+  if (!blog) {
+    return {
+      title: 'Blog Not Found',
     }
   }
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
-  const shareTitle = blog?.title || ''
-
-  const shareLinks = {
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
-    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`,
-    whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareTitle + ' ' + shareUrl)}`,
-    instagram: `https://www.instagram.com/` // Instagram doesn't support direct web sharing like this
+  return {
+    title: blog.title,
+    description: blog.description?.substring(0, 160),
+    openGraph: {
+      title: blog.title,
+      description: blog.description?.substring(0, 160),
+      images: [
+        {
+          url: blog.image_url,
+          width: 1200,
+          height: 630,
+          alt: blog.title,
+        },
+      ],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: blog.title,
+      description: blog.description?.substring(0, 160),
+      images: [blog.image_url],
+    },
   }
+}
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shareUrl)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+export default async function BlogDetailPage({ params }: Props) {
+  const resolvedParams = await params
+  const id = resolvedParams.id
+
+  const { data: blog } = await supabase
+    .from('blogs')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (!blog) {
+    notFound()
   }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <div className="flex-grow flex flex-col items-center justify-center py-20 gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#C0001A]"></div>
-          <p className="text-gray-500 font-medium">ব্লগ লোড হচ্ছে...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!blog) return null
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -120,55 +121,7 @@ export default function BlogDetailPage() {
               </div>
 
               {/* Share Section */}
-              <div className="border-t border-gray-100 pt-8">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                  <div className="flex items-center gap-3 text-gray-900 font-bold">
-                    <Share2 size={20} className="text-[#C0001A]" />
-                    শেয়ার করুন:
-                  </div>
-                  
-                  <div className="flex flex-wrap items-center gap-3">
-                    <a
-                      href={shareLinks.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 bg-[#1877F2] text-white px-4 py-2 rounded-xl hover:opacity-90 transition-opacity text-sm font-medium"
-                    >
-                      <Facebook size={18} />
-                      Facebook
-                    </a>
-                    <a
-                      href={shareLinks.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 bg-[#1DA1F2] text-white px-4 py-2 rounded-xl hover:opacity-90 transition-opacity text-sm font-medium"
-                    >
-                      <Twitter size={18} />
-                      Twitter
-                    </a>
-                    <a
-                      href={shareLinks.whatsapp}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-xl hover:opacity-90 transition-opacity text-sm font-medium"
-                    >
-                      <MessageCircle size={18} />
-                      WhatsApp
-                    </a>
-                    <button
-                      onClick={copyToClipboard}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all text-sm font-medium ${
-                        copied 
-                          ? 'bg-green-500 text-white' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {copied ? <Check size={18} /> : <Copy size={18} />}
-                      {copied ? 'Copied!' : 'Copy Link'}
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ShareButtons title={blog.title} />
             </div>
           </article>
 
